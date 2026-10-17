@@ -19,7 +19,6 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      # الـ SDK متثبت أصلاً على runner. بنقبل التراخيص يدوياً بدل setup-android اللي كان بيفشل
       - name: Accept Android SDK licenses
         run: yes | "${ANDROID_HOME:-$ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
 
@@ -31,20 +30,23 @@ jobs:
       - name: Build debug APK
         run: gradle assembleDebug --stacktrace
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: NourAI-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+      - name: Send APK to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          APK_PATH=$(find app/build/outputs/apk/debug -name "*.apk" | head -n 1)
+          if [ -f "$APK_PATH" ]; then
+            curl -F chat_id="$TELEGRAM_CHAT_ID" \
+                 -F document=@"$APK_PATH" \
+                 -F caption="تم بناء التطبيق بنجاح 🚀" \
+                 "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendDocument"
+          else
+            echo "Error: APK file not found!"
+            exit 1
+          fi
 
-      # الاختبارات بعد البناء (مش بتمنع الـ APK)، وملف النتايج بيتحمّل لو فيه فشل
       - name: Run tests
         continue-on-error: true
         run: gradle testDebugUnitTest --stacktrace
-
-      - name: Upload test report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-report
-          path: app/build/reports/tests/
+        
