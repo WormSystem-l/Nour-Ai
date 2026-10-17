@@ -30,26 +30,27 @@ jobs:
       - name: Build debug APK
         run: gradle assembleDebug --stacktrace
 
-      - name: Upload APK to Transfer.sh & Send Link to Telegram
+      - name: Create Release and Upload APK
+        uses: softprops/action-gh-release@v2
+        id: release
+        with:
+          tag_name: debug-v${{ github.run_number }}
+          name: "Debug Build #${{ github.run_number }}"
+          files: app/build/outputs/apk/debug/*.apk
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send Release Link to Telegram
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          RELEASE_URL: ${{ steps.release.outputs.url }}
         run: |
-          APK_PATH=$(find app/build/outputs/apk/debug -name "*.apk" | head -n 1)
-          if [ -f "$APK_PATH" ]; then
-            echo "Uploading APK to Transfer.sh..."
-            # رفع الملف واستلام الرابط المباشر
-            DOWNLOAD_URL=$(curl --upload-file "$APK_PATH" "https://transfer.sh/app-debug.apk")
-            echo "Download URL: $DOWNLOAD_URL"
-            
-            # إرسال الرابط عبر تليجرام
-            curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
-                 -d chat_id="$TELEGRAM_CHAT_ID" \
-                 -d text="تم بناء التطبيق بنجاح 🚀%0Aحمل النسخة من هنا:%0A$DOWNLOAD_URL"
-          else
-            echo "Error: APK file not found!"
-            exit 1
-          fi
+          curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+               -d chat_id="$TELEGRAM_CHAT_ID" \
+               -d text="تم بناء التطبيق بنجاح 🚀%0Aحمل النسخة (Debug) من صفحة الإصدارات:%0A$RELEASE_URL"
 
       - name: Run tests
         continue-on-error: true
