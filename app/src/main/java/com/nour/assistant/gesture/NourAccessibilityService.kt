@@ -60,7 +60,7 @@ class NourAccessibilityService : AccessibilityService() {
 
     fun showCursor(x: Float, y: Float, pinching: Boolean) {
         val v = cursor ?: addCursor() ?: return
-        v.x = x; v.y = y; v.pinching = pinching
+        v.cursorX = x; v.cursorY = y; v.pinching = pinching
         v.invalidate()
     }
 
@@ -85,7 +85,7 @@ class NourAccessibilityService : AccessibilityService() {
     } catch (_: Exception) { null }
 
     private class CursorView(ctx: Context) : View(ctx) {
-        var x = -100f; var y = -100f; var pinching = false
+        var cursorX = -100f; var cursorY = -100f; var pinching = false
         private val d = resources.displayMetrics.density
         private val ring = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeWidth = 3f * d }
         private val dot = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -93,8 +93,8 @@ class NourAccessibilityService : AccessibilityService() {
             val r = (if (pinching) 11f else 20f) * d
             ring.color = if (pinching) 0xFFF0ABFC.toInt() else 0xCCC4B5FD.toInt()
             dot.color = if (pinching) 0xFFF0ABFC.toInt() else 0xFF8B5CF6.toInt()
-            c.drawCircle(x, y, r, ring)
-            c.drawCircle(x, y, 4f * d, dot)
+            c.drawCircle(cursorX, cursorY, r, ring)
+            c.drawCircle(cursorX, cursorY, 4f * d, dot)
         }
     }
 
