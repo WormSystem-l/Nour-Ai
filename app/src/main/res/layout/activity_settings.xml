@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical" android:padding="16dp">
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="@string/settings_title" android:textSize="20sp" android:textStyle="bold"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" android:text="@string/label_base" android:labelFor="@+id/baseUrl"/>
+    <EditText android:id="@+id/baseUrl" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:inputType="textUri"
+        android:importantForAutofill="no" android:textDirection="ltr"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="@string/label_key" android:labelFor="@+id/apiKey"/>
+    <EditText android:id="@+id/apiKey" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:inputType="textPassword"
+        android:importantForAutofill="no" android:textDirection="ltr"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="@string/label_system" android:labelFor="@+id/system"/>
+    <EditText android:id="@+id/system" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:inputType="textMultiLine"
+        android:importantForAutofill="no"/>
+    <!-- نور بينفذ مهام: التطبيقات المسموحة -->
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginTop="22dp" android:text="@string/tools_title"
+        android:textSize="18sp" android:textStyle="bold"/>
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/tools_desc" android:textSize="13sp" android:alpha="0.75"/>
+    <com.google.android.material.button.MaterialButton android:id="@+id/btnApps"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" style="@style/Widget.Material3.Button.TonalButton"/>
+
+    <!-- نداء "يا نور" -->
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginTop="22dp" android:text="@string/wake_title"
+        android:textSize="18sp" android:textStyle="bold"/>
+    <androidx.appcompat.widget.SwitchCompat android:id="@+id/wakeSwitch"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:minHeight="48dp" android:text="@string/wake_switch"/>
+    <TextView android:id="@+id/wakeStatus" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:textSize="13sp" android:alpha="0.8"/>
+    <ProgressBar android:id="@+id/wakeProgress" style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:max="100" android:visibility="gone"/>
+
+    <!-- إيماءات اليد -->
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginTop="22dp" android:text="@string/gesture_title"
+        android:textSize="18sp" android:textStyle="bold"/>
+    <androidx.appcompat.widget.SwitchCompat android:id="@+id/gestureSwitch"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:minHeight="48dp" android:text="@string/gesture_switch"/>
+    <TextView android:id="@+id/gestureStatus" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:textSize="13sp" android:alpha="0.8"/>
+    <androidx.appcompat.widget.SwitchCompat android:id="@+id/reverseSwitch"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:minHeight="48dp" android:text="@string/gesture_reverse"/>
+    <com.google.android.material.button.MaterialButton android:id="@+id/btnAccess"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" android:text="@string/gesture_access_button"
+        style="@style/Widget.Material3.Button.TonalButton"/>
+    <com.google.android.material.button.MaterialButton android:id="@+id/btnGestures"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" android:text="@string/gesture_editor_button"
+        style="@style/Widget.Material3.Button.TonalButton"/>
+
+    <com.google.android.material.button.MaterialButton android:id="@+id/btnGestureSens"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" style="@style/Widget.Material3.Button.TonalButton"/>
+
+    <!-- البحث في الإنترنت -->
+    <androidx.appcompat.widget.SwitchCompat android:id="@+id/webSwitch"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="18dp" android:minHeight="48dp" android:text="@string/web_switch"/>
+
+    <com.google.android.material.button.MaterialButton android:id="@+id/btnWakeSens"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" style="@style/Widget.Material3.Button.TonalButton"/>
+
+    <com.google.android.material.button.MaterialButton android:id="@+id/btnStatus"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="18dp" android:text="@string/status_button"
+        style="@style/Widget.Material3.Button.TonalButton"/>
+
+    <com.google.android.material.button.MaterialButton android:id="@+id/btnExportLog"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" android:text="@string/export_log"
+        style="@style/Widget.Material3.Button.TonalButton"/>
+
+    <com.google.android.material.button.MaterialButton android:id="@+id/btnBattery"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" android:text="@string/battery_button"
+        style="@style/Widget.Material3.Button.TonalButton"/>
+
+    <com.google.android.material.button.MaterialButton android:id="@+id/btnVoiceLang"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        style="@style/Widget.Material3.Button.TonalButton"/>
+
+    <com.google.android.material.button.MaterialButton android:id="@+id/save"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" android:text="@string/save"/>
+</LinearLayout>
+</ScrollView>

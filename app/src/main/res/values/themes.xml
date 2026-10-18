@@ -1,0 +1,6 @@
+<resources>
+    <style name="Theme.NourAI" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#3F51B5</item>
+        <item name="colorSecondary">#00BFA5</item>
+    </style>
+</resources>
