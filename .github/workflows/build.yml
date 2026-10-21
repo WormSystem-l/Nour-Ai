@@ -9,6 +9,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # 👇 هنا أضفنا الصلاحيات اللازمة لإنشاء الـ Release
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -19,7 +23,6 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      # الـ SDK متثبت أصلاً على runner. بنقبل التراخيص يدوياً بدل setup-android اللي كان بيفشل
       - name: Accept Android SDK licenses
         run: yes | "${ANDROID_HOME:-$ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
 
@@ -31,20 +34,28 @@ jobs:
       - name: Build debug APK
         run: gradle assembleDebug --stacktrace
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - name: Create Release and Upload APK
+        uses: softprops/action-gh-release@v2
+        id: release
         with:
-          name: NourAI-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          tag_name: debug-v${{ github.run_number }}
+          name: "Debug Build #${{ github.run_number }}"
+          files: app/build/outputs/apk/debug/*.apk
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # الاختبارات بعد البناء (مش بتمنع الـ APK)، وملف النتايج بيتحمّل لو فيه فشل
+      - name: Send Release Link to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          RELEASE_URL: ${{ steps.release.outputs.url }}
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+               -d chat_id="$TELEGRAM_CHAT_ID" \
+               -d text="تم بناء التطبيق بنجاح 🚀%0Aحمل النسخة (Debug) من صفحة الإصدارات:%0A$RELEASE_URL"
+
       - name: Run tests
         continue-on-error: true
         run: gradle testDebugUnitTest --stacktrace
-
-      - name: Upload test report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-report
-          path: app/build/reports/tests/
