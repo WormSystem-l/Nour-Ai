@@ -31,13 +31,9 @@ jobs:
       - name: Build debug APK
         run: gradle assembleDebug --stacktrace
 
-      - name: Upload APK as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: NourAI-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+      # تم حذف خطوة Upload APK as artifact لعدم استهلاك مساحة التخزين المجانية
 
-      # 1. خطوة رفع الـ APK لـ GitHub Releases أوتوماتيكياً
+      # 1. خطوة رفع الـ APK لـ GitHub Releases أوتوماتيكياً (هي الأساسية والدائمة)
       - name: Create Release & Upload APK
         uses: softprops/action-gh-release@v2
         with:
@@ -66,9 +62,4 @@ jobs:
         continue-on-error: true
         run: gradle testDebugUnitTest --stacktrace
 
-      - name: Upload test report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-report
-          path: app/build/reports/tests/
+      # تم حذف خطوة Upload test report أيضاً لتوفير المساحة
