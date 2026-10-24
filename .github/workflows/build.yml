@@ -9,6 +9,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    # 🔑 ده السطر السحري اللي بيحل مشكلة خطأ 403 وصلاحيات الكتابة للريليس
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,9 +36,7 @@ jobs:
       - name: Build debug APK
         run: gradle assembleDebug --stacktrace
 
-      # تم حذف خطوة Upload APK as artifact لعدم استهلاك مساحة التخزين المجانية
-
-      # 1. خطوة رفع الـ APK لـ GitHub Releases أوتوماتيكياً (هي الأساسية والدائمة)
+      # خطوة رفع الـ APK لـ GitHub Releases أوتوماتيكياً
       - name: Create Release & Upload APK
         uses: softprops/action-gh-release@v2
         with:
@@ -44,22 +47,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 2. خطوة إرسال الرابط مباشرة على بوت التليجرام
+      # خطوة إرسال الرابط مباشرة على بوت التليجرام
       - name: Send Notification to Telegram
         if: always()
         run: |
-          # استخراج رابط الريليز بشكل تلقائي بناءً على اسم الـ tag والرابط الحالي للمستودع
           RELEASE_URL="https://github.com/${{ github.repository }}/releases/tag/v1.0.${{ github.run_number }}"
-          MESSAGE="🚀 **تم بنجاح بناء وتنسيق تحديث NourAI الجديد!**%0A%0A📦 **نوع النسخة:** Debug APK%0A🔗 **رابط التحميل من الريليز:** $RELEASE_URL%0A📌 **رقم البناء (Build):** ${{ github.run_number }}"
+          MESSAGE="🚀 **تم بنجاح بناء وتنسيق تحديث NourAI الجديد!**%0A%0A📦 **نوع النسخة:** Debug APK%0A🔗 **رابط التحميل من الريليس:** $RELEASE_URL%0A📌 **رقم البناء (Build):** ${{ github.run_number }}"
           
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
           -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
           -d "text=$MESSAGE" \
           -d "parse_mode=Markdown"
 
-      # الاختبارات بعد البناء (مش بتمنع الـ APK)، وملف النتايج بيتحمّل لو فيه فشل
+      # الاختبارات بعد البناء
       - name: Run tests
         continue-on-error: true
         run: gradle testDebugUnitTest --stacktrace
-
-      # تم حذف خطوة Upload test report أيضاً لتوفير المساحة
