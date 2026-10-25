@@ -1,6 +1,32 @@
-.gradle/
+# ملفات Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
 build/
-app/build/
-local.properties
+*.dart_tool
+
+# ملفات Flutter / Android المولّدة
+flutter_*.png
+.flutter-plugins
+.flutter-plugins-dependencies
+android/local.properties
+android/.gradle/
+android/app/debug/
+android/app/profile/
+android/app/release/
+*.keystore
+*.jks
+
+# IDE
 .idea/
+.vscode/
 *.iml
+
+# نظام التشغيل
+.DS_Store
+Thumbs.db
+
+# ملاحظة: مجلد android/ مش متجاهَل عن قصد.
+# لو عايز تخليه يتولّد تلقائيًا في CI بس، أضف السطر ده:
+# android/

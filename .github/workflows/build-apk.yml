@@ -1,0 +1,74 @@
+name: Build APK
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    name: Build release APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Show versions
+        run: |
+          flutter --version
+          java -version
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        # الأخطاء فقط هي اللي توقف البناء — التحذيرات والملاحظات مش هتكسر الشغل
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: Run tests
+        run: flutter test --reporter expanded
+
+      - name: Generate Android scaffold
+        # المجلد android/ مش في الريبو عن قصد: بيتولّد من قالب
+        # نفس إصدار Flutter المثبّت، فمفيش تعارض Gradle/AGP.
+        run: |
+          if [ -d android ]; then
+            echo "android/ موجود — هيتم استخدامه زي ما هو."
+          else
+            echo "android/ مش موجود — بيتم توليده..."
+            flutter create \
+              --platforms=android \
+              --project-name conanty \
+              --org com.conanty \
+              "$RUNNER_TEMP/scaffold"
+            cp -r "$RUNNER_TEMP/scaffold/android" ./android
+          fi
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Show APK size
+        run: ls -lh build/app/outputs/flutter-apk/
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: conanty-apk
+          path: build/app/outputs/flutter-apk/*.apk
+          if-no-files-found: error
+          retention-days: 30
