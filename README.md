@@ -60,8 +60,14 @@ git push -u origin main
 1. افتح الريبو على GitHub → تبويب **Actions**
 2. هتلاقي workflow اسمه **Build APK** بدأ يشتغل لوحده
 3. استنى ~5–8 دقايق لحد ما يبقى ✅
-4. انزل تحت لـ **Artifacts** → حمّل **`conanty-apk`**
-5. فك الضغط → هتلاقي `app-release.apk` → انقله للموبايل وثبّته
+4. **الـ APK بينزل تلقائيًا في صفحة Releases** ← تحت tag اسمه `latest`
+   (رابط مباشر: `github.com/USERNAME/conanty/releases/latest`)
+5. نزّل `app-release.apk` → انقله للموبايل وثبّته
+
+> فيه كمان نسخة في **Artifacts** جوه صفحة التشغيل، كاحتياطي.
+
+**مهم:** النشر التلقائي بيحصل على `main` بس. الـ pull requests بتتبني وتتفحص
+من غير ما تنشر.
 
 > لو عايز تشغّله يدوي: Actions → Build APK → **Run workflow**.
 

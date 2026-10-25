@@ -6,6 +6,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+# مطلوبة عشان الـ workflow يقدر ينشر Release
+permissions:
+  contents: write
+
 jobs:
   build-apk:
     name: Build release APK
@@ -65,7 +69,25 @@ jobs:
       - name: Show APK size
         run: ls -lh build/app/outputs/flutter-apk/
 
-      - name: Upload APK
+      # === النشر التلقائي في Releases ===
+      # أي بناء ناجح على main بيحدّث Release اسمه "latest" وفيه الـ APK.
+      - name: Publish APK to Releases
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Conanty — أحدث نسخة
+          body: |
+            بناء تلقائي من الـ commit `${{ github.sha }}`
+            بتاريخ ${{ github.event.repository.updated_at }}
+          files: build/app/outputs/flutter-apk/app-release.apk
+          make_latest: true
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # artifact إضافي للرجوع السريع من صفحة الـ Actions
+      - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
         with:
           name: conanty-apk
